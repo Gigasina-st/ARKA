@@ -5,16 +5,19 @@ import ProductCard from './components/ProductCard'
 import SectionTitle from './components/SectionTitle'
 import CartDrawer from './components/CartDrawer'
 import Footer from './components/Footer'
+import ProductDetail from './components/ProductDetail'
 import BrandsPage,{BrandDetail} from './components/BrandsPage'
 import {products,brands,articles} from './data'
 import type {Product} from './types'
 
 export default function App(){
- const [page,setPage]=useState<'home'|'brands'|'brand'>('home')
+ const [page,setPage]=useState<'home'|'brands'|'brand'|'product'>('home')
+ const [selectedProduct,setSelectedProduct]=useState<Product|null>(null)
  const [selectedBrand,setSelectedBrand]=useState('')
  const openBrands=()=>{setPage('brands');window.scrollTo(0,0)}
  const openBrand=(name:string)=>{setSelectedBrand(name);setPage('brand');window.scrollTo(0,0)}
  const selected=brands.find(b=>b.name===selectedBrand)
+ const openProduct=(product:Product)=>{setSelectedProduct(product);setPage('product');window.scrollTo(0,0)}
  const [cartOpen,setCartOpen]=useState(false)
  const [cart,setCart]=useState<{product:Product;qty:number}[]>([])
  const add=(product:Product)=>setCart(c=>{const x=c.find(i=>i.product.id===product.id);return x?c.map(i=>i.product.id===product.id?{...i,qty:i.qty+1}:i):[...c,{product,qty:1}]})
@@ -36,7 +39,7 @@ export default function App(){
 
    <section className="editorial-feature container" id="collections"><div className="feature-main"><img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1500&q=85" alt="کالکشن پاییزه"/><div className="feature-caption"><span>COLLECTION 01</span><h2>سکوتِ فرم</h2><a href="#shop">مشاهده کالکشن <ArrowLeft/></a></div></div><div className="feature-side"><img src="https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&w=900&q=85" alt="جزئیات کالکشن"/><p>فرم‌های خالص، بافت‌های آرام و رنگ‌هایی که به زمان وابسته نیستند.</p><a className="underlined" href="#shop">اکتشاف <ArrowLeft/></a></div></section>
 
-   <section className="section container" id="new"><SectionTitle eyebrow="NEW ARRIVALS" title="تازه‌واردها" link="مشاهده همه"/><div className="product-grid">{products.slice(0,4).map(p=><ProductCard key={p.id} product={p} onAdd={add}/>)}</div></section>
+   <section className="section container" id="new"><SectionTitle eyebrow="NEW ARRIVALS" title="تازه‌واردها" link="مشاهده همه"/><div className="product-grid">{products.slice(0,4).map(p=><ProductCard key={p.id} product={p} onAdd={add} onOpen={openProduct}/>)}</div></section>
 
    <section className="edit-section"><div className="container"><SectionTitle eyebrow="THE EDIT" title="انتخاب سردبیر"/><div className="edit-grid"><a className="edit-card edit-large" href="#shop"><img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1400&q=85" alt="استایل مینیمال"/><div><span>01 — MINIMAL</span><h3>کمتر، اما دقیق‌تر.</h3><ArrowUpLeft/></div></a><a className="edit-card" href="#shop"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=85" alt="استایل شهری"/><div><span>02 — CITY</span><h3>ریتم شهر</h3><ArrowUpLeft/></div></a><a className="edit-card" href="#shop"><img src="https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&w=1000&q=85" alt="اکسسوری"/><div><span>03 — DETAILS</span><h3>جزئیات ماندگار</h3><ArrowUpLeft/></div></a></div></div></section>
 
@@ -52,6 +55,7 @@ export default function App(){
   </main>}
   {page==='brands'&&<BrandsPage onAdd={add} onOpenBrand={openBrand}/>} 
   {page==='brand'&&selected&&<BrandDetail brand={selected} onAdd={add} onBack={openBrands}/>} 
+  {page==='product'&&selectedProduct&&<ProductDetail product={selectedProduct} onAdd={add} onOpenProduct={openProduct} onBack={openBrands}/>}  
   <Footer/>
   {cartOpen&&<CartDrawer items={cart} onClose={()=>setCartOpen(false)} onRemove={remove} onChange={change}/>}
  </div>
