@@ -55,8 +55,8 @@ export default function App(){
 
    <section className="newsletter container"><div><span className="eyebrow">STAY IN THE EDIT</span><h2>آرکا را<br/><i>دنبال کنید.</i></h2></div><div className="newsletter-form"><p>انتخاب‌های سردبیر، کالکشن‌های تازه و روایت‌های آرکا را مستقیماً دریافت کنید.</p><form onSubmit={e=>e.preventDefault()}><input type="email" placeholder="ایمیل شما" aria-label="ایمیل شما"/><button type="submit">عضویت <ArrowLeft/></button></form><small>با عضویت، از اخبار و پیشنهادهای منتخب آرکا باخبر می‌شوید.</small></div></section>
   </main>}
-  {page==='brands'&&<BrandsPage onAdd={add} onOpenBrand={openBrand}/>} 
-  {page==='brand'&&selected&&<BrandDetail brand={selected} onAdd={add} onBack={goHome}/>} 
+  {page==='brands'&&<BrandsPage onAdd={add} onOpenBrand={openBrand} onOpenProduct={openProduct}/>} 
+  {page==='brand'&&selected&&<BrandDetail brand={selected} onAdd={add} onOpenProduct={openProduct} onBack={openBrands}/>} 
   {page==='product'&&selectedProduct&&<ProductDetail product={selectedProduct} onAdd={add} onOpenProduct={openProduct} onBack={goHome}/>}  
   <Footer/>
   {cartOpen&&<CartDrawer items={cart} onClose={()=>setCartOpen(false)} onRemove={remove} onChange={change}/>}
