@@ -5,10 +5,16 @@ import ProductCard from './components/ProductCard'
 import SectionTitle from './components/SectionTitle'
 import CartDrawer from './components/CartDrawer'
 import Footer from './components/Footer'
+import BrandsPage,{BrandDetail} from './components/BrandsPage'
 import {products,brands,articles} from './data'
 import type {Product} from './types'
 
 export default function App(){
+ const [page,setPage]=useState<'home'|'brands'|'brand'>('home')
+ const [selectedBrand,setSelectedBrand]=useState('')
+ const openBrands=()=>{setPage('brands');window.scrollTo(0,0)}
+ const openBrand=(name:string)=>{setSelectedBrand(name);setPage('brand');window.scrollTo(0,0)}
+ const selected=brands.find(b=>b.name===selectedBrand)
  const [cartOpen,setCartOpen]=useState(false)
  const [cart,setCart]=useState<{product:Product;qty:number}[]>([])
  const add=(product:Product)=>setCart(c=>{const x=c.find(i=>i.product.id===product.id);return x?c.map(i=>i.product.id===product.id?{...i,qty:i.qty+1}:i):[...c,{product,qty:1}]})
@@ -16,8 +22,8 @@ export default function App(){
  const change=(id:number,d:number)=>setCart(c=>c.map(i=>i.product.id===id?{...i,qty:Math.max(1,i.qty+d)}:i))
  const count=cart.reduce((s,i)=>s+i.qty,0)
  return <div id="top">
-  <Header cartCount={count} onCart={()=>setCartOpen(true)}/>
-  <main>
+  <Header cartCount={count} onCart={()=>setCartOpen(true)} onBrands={openBrands}/>
+  {page==='home'&&<main>
    <section className="hero">
     <img className="hero-image" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=2200&q=90" alt="کمپین فشن آرکا"/>
     <div className="hero-overlay"/>
@@ -43,7 +49,9 @@ export default function App(){
    <section className="section journal container" id="journal"><SectionTitle eyebrow="JOURNAL" title="مجله آرکا" link="مشاهده همه"/><div className="article-grid">{articles.map((a,i)=><article className={`article-card ${i===0?'article-feature':''}`} key={a.title}><a href="#journal"><div><img src={a.image} alt={a.title}/><span className="article-arrow"><ArrowUpLeft/></span></div><span className="eyebrow">{a.category}</span><h3>{a.title}</h3><p>{a.excerpt}</p></a></article>)}</div></section>
 
    <section className="newsletter container"><div><span className="eyebrow">STAY IN THE EDIT</span><h2>آرکا را<br/><i>دنبال کنید.</i></h2></div><div className="newsletter-form"><p>انتخاب‌های سردبیر، کالکشن‌های تازه و روایت‌های آرکا را مستقیماً دریافت کنید.</p><form onSubmit={e=>e.preventDefault()}><input type="email" placeholder="ایمیل شما" aria-label="ایمیل شما"/><button type="submit">عضویت <ArrowLeft/></button></form><small>با عضویت، از اخبار و پیشنهادهای منتخب آرکا باخبر می‌شوید.</small></div></section>
-  </main>
+  </main>}
+  {page==='brands'&&<BrandsPage onAdd={add} onOpenBrand={openBrand}/>} 
+  {page==='brand'&&selected&&<BrandDetail brand={selected} onAdd={add} onBack={openBrands}/>} 
   <Footer/>
   {cartOpen&&<CartDrawer items={cart} onClose={()=>setCartOpen(false)} onRemove={remove} onChange={change}/>}
  </div>
