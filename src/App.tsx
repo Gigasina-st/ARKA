@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useEffect,useState} from 'react'
 import {ArrowLeft,ArrowUpLeft,ChevronLeft} from 'lucide-react'
 import Header from './components/Header'
 import ProductCard from './components/ProductCard'
@@ -14,10 +14,11 @@ export default function App(){
  const [page,setPage]=useState<'home'|'brands'|'brand'|'product'>('home')
  const [selectedProduct,setSelectedProduct]=useState<Product|null>(null)
  const [selectedBrand,setSelectedBrand]=useState('')
- const openBrands=()=>{setPage('brands');window.scrollTo(0,0)}
+ const openBrands=()=>{setPage('brands');setSelectedProduct(null);window.history.pushState({},'',window.location.pathname+window.location.search);window.scrollTo(0,0)}
  const openBrand=(name:string)=>{setSelectedBrand(name);setPage('brand');window.scrollTo(0,0)}
  const selected=brands.find(b=>b.name===selectedBrand)
- const openProduct=(product:Product)=>{setSelectedProduct(product);setPage('product');window.scrollTo(0,0)}
+ const openProduct=(product:Product)=>{setSelectedProduct(product);setPage('product');window.history.pushState({},'',`#/product/${product.id}`);window.scrollTo(0,0)}
+ useEffect(()=>{const onPop=()=>{const m=window.location.hash.match(/^#\\/product\\/(\\d+)$/);if(m){const p=products.find(x=>x.id===Number(m[1]));if(p){setSelectedProduct(p);setPage('product');return}}setSelectedProduct(null);setPage('home')};onPop();addEventListener('popstate',onPop);addEventListener('hashchange',onPop);return()=>{removeEventListener('popstate',onPop);removeEventListener('hashchange',onPop)}},[])
  const [cartOpen,setCartOpen]=useState(false)
  const [cart,setCart]=useState<{product:Product;qty:number}[]>([])
  const add=(product:Product)=>setCart(c=>{const x=c.find(i=>i.product.id===product.id);return x?c.map(i=>i.product.id===product.id?{...i,qty:i.qty+1}:i):[...c,{product,qty:1}]})
