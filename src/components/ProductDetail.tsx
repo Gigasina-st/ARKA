@@ -15,6 +15,7 @@ export default function ProductDetail({product,onAdd,onOpenProduct,onBack}:Props
  const [color,setColor]=useState(product.colors[0]??'')
  const [size,setSize]=useState(product.sizes?.[0]??'')
  const [liked,setLiked]=useState(false)
+ const [sizeGuideOpen,setSizeGuideOpen]=useState(false)
  const [qty,setQty]=useState(1)
  const [copied,setCopied]=useState(false)
  const related=products.filter(p=>p.id!==product.id&&(p.brand===product.brand||p.category===product.category)).slice(0,4)
@@ -44,7 +45,7 @@ export default function ProductDetail({product,onAdd,onOpenProduct,onBack}:Props
     <p className="detail-description">{product.description}</p>
 
     {product.colors.length>0&&<div className="variant-block"><div className="variant-label"><span>رنگ</span><strong>{color}</strong></div><div className="swatches">{product.colors.map(c=><button key={c} className={c===color?'selected':''} onClick={()=>setColor(c)} aria-label={`رنگ ${c}`}><span style={{background:swatchColor(c)}}/></button>)}</div></div>}
-    {product.sizes&&<div className="variant-block"><div className="variant-label"><span>سایز</span><button className="size-guide">راهنمای سایز</button></div><div className="sizes">{product.sizes.map(s=><button key={s} className={s===size?'selected':''} onClick={()=>setSize(s)}>{s}</button>)}</div></div>}
+    {product.sizes&&<div className="variant-block"><div className="variant-label"><span>سایز</span><button className="size-guide" onClick={()=>setSizeGuideOpen(true)}>راهنمای سایز</button></div><div className="sizes">{product.sizes.map(s=><button key={s} className={s===size?'selected':''} onClick={()=>setSize(s)}>{s}</button>)}</div></div>}
 
     <div className="detail-actions"><div className="quantity"><button onClick={()=>setQty(Math.max(1,qty-1))} aria-label="کاهش"><Minus/></button><span>{new Intl.NumberFormat('fa-IR').format(qty)}</span><button onClick={()=>setQty(Math.min(product.stock??99,qty+1))} aria-label="افزایش"><Plus/></button></div><button className="add-detail" onClick={addToCart}>افزودن به سبد <ArrowLeft/></button></div>
     <button className="share-btn" onClick={share}><Share2/>{copied?'لینک کپی شد':'اشتراک‌گذاری محصول'}</button>
@@ -56,6 +57,7 @@ export default function ProductDetail({product,onAdd,onOpenProduct,onBack}:Props
   <section className="product-story container"><div><span className="eyebrow">THE ARKA NOTE</span><h2>جزئیاتی که<br/><i>دیده می‌شوند.</i></h2></div><p>{product.description} در آرکا هر قطعه بخشی از یک انتخاب آگاهانه است؛ محصولی که قرار است در کمد شما بماند، نه فقط یک فصل از آن عبور کند.</p></section>
 
   {related.length>0&&<section className="section container related-products"><SectionTitle eyebrow="YOU MAY ALSO LIKE" title="پیشنهاد آرکا"/><div className="product-grid">{related.map(p=><ProductCard key={p.id} product={p} onAdd={onAdd} onOpen={onOpenProduct}/>)}</div></section>}
+ {sizeGuideOpen&&<div className="size-guide-modal" role="dialog" aria-modal="true" aria-label="راهنمای سایز"><button className="size-guide-close" onClick={()=>setSizeGuideOpen(false)} aria-label="بستن">×</button><span className="eyebrow">ARKA SIZE GUIDE</span><h2>راهنمای سایز</h2><p>برای انتخاب دقیق‌تر، اندازه‌های خود را با جدول زیر مقایسه کنید.</p><div className="size-table"><div><span>سایز</span><span>دور سینه</span><span>دور کمر</span><span>قد پیشنهادی</span></div>{[['۳۶','۸۴–۸۸','۶۶–۷۰','۱۶۰–۱۶۵'],['۳۸','۸۸–۹۲','۷۰–۷۴','۱۶۵–۱۷۰'],['۴۰','۹۲–۹۶','۷۴–۷۸','۱۷۰–۱۷۵'],['۴۲','۹۶–۱۰۰','۷۸–۸۲','۱۷۵–۱۸۰'],['۴۴','۱۰۰–۱۰۴','۸۲–۸۶','۱۸۰–۱۸۵']].map(row=><div key={row[0]}>{row.map(x=><span key={x}>{x}</span>)}</div>)}</div><small>اعداد تقریبی هستند و بر حسب سانتی‌متر ارائه شده‌اند.</small></div>}
  </main>
 }
 
