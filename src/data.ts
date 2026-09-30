@@ -17,7 +17,8 @@ const baseProducts:Product[]=[
 {id:12,brand:'سایه',name:'روسری ابریشم آینه',category:'اکسسوری',price:2800000,image:img('1529139575747-1d6f8a2f5e2f'),alt:'روسری ابریشمی',colors:['زیتونی','کرم']}
 ]
 
-const productGallery=(p:Product)=>[p.image,...(p.gallery??[])]
+const galleryPool=['https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1200&q=85','https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&w=1200&q=85','https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=85']
+const productGallery=(p:Product)=>[p.image,...(p.gallery??galleryPool.filter(x=>x!==p.image).slice(0,2))]
 export const products:Product[]=baseProducts.map(p=>({...p,
  sizes:p.sizes??(p.category==='کفش'?['۳۸','۳۹','۴۰','۴۱','۴۲']:p.category==='پوشاک'?['۳۶','۳۸','۴۰','۴۲','۴۴']:undefined),
  gallery:productGallery(p),
