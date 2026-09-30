@@ -14,6 +14,7 @@ export default function App(){
  const [page,setPage]=useState<'home'|'brands'|'brand'|'product'>('home')
  const [selectedProduct,setSelectedProduct]=useState<Product|null>(null)
  const [selectedBrand,setSelectedBrand]=useState('')
+ const goHome=()=>{setPage('home');setSelectedProduct(null);window.history.pushState({},'',window.location.pathname+window.location.search);window.scrollTo(0,0)}
  const openBrands=()=>{setPage('brands');setSelectedProduct(null);window.history.pushState({},'',window.location.pathname+window.location.search);window.scrollTo(0,0)}
  const openBrand=(name:string)=>{setSelectedBrand(name);setPage('brand');window.scrollTo(0,0)}
  const selected=brands.find(b=>b.name===selectedBrand)
@@ -55,7 +56,7 @@ export default function App(){
    <section className="newsletter container"><div><span className="eyebrow">STAY IN THE EDIT</span><h2>آرکا را<br/><i>دنبال کنید.</i></h2></div><div className="newsletter-form"><p>انتخاب‌های سردبیر، کالکشن‌های تازه و روایت‌های آرکا را مستقیماً دریافت کنید.</p><form onSubmit={e=>e.preventDefault()}><input type="email" placeholder="ایمیل شما" aria-label="ایمیل شما"/><button type="submit">عضویت <ArrowLeft/></button></form><small>با عضویت، از اخبار و پیشنهادهای منتخب آرکا باخبر می‌شوید.</small></div></section>
   </main>}
   {page==='brands'&&<BrandsPage onAdd={add} onOpenBrand={openBrand}/>} 
-  {page==='brand'&&selected&&<BrandDetail brand={selected} onAdd={add} onBack={openBrands}/>} 
+  {page==='brand'&&selected&&<BrandDetail brand={selected} onAdd={add} onBack={goHome}/>} 
   {page==='product'&&selectedProduct&&<ProductDetail product={selectedProduct} onAdd={add} onOpenProduct={openProduct} onBack={openBrands}/>}  
   <Footer/>
   {cartOpen&&<CartDrawer items={cart} onClose={()=>setCartOpen(false)} onRemove={remove} onChange={change}/>}
