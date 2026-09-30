@@ -2,7 +2,7 @@ import type {Product,Brand,Article} from './types'
 
 const img=(id:string,w=1200,h=1500)=>`https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&h=${h}&q=85`
 
-export const products:Product[]=[
+const baseProducts:Product[]=[
 {id:1,brand:'نُما',name:'کت مینیمال آترا',category:'پوشاک',price:12800000,image:img('1529139575747-1d6f8a2f5e2f'),alt:'کت مینیمال کرم',colors:['مشکی','استخوانی']},
 {id:2,brand:'وِرا',name:'کیف دستی نوآ',category:'کیف',price:8900000,oldPrice:10500000,image:img('1584917865442-de89df76afd3'),alt:'کیف چرمی',colors:['قهوه‌ای','مشکی']},
 {id:3,brand:'آوان',name:'پیراهن ابریشمی سُها',category:'پوشاک',price:9900000,image:img('1496747611176-843222e1e57c'),alt:'پیراهن ابریشمی',colors:['شیری','ذغالی']},
@@ -16,6 +16,18 @@ export const products:Product[]=[
 {id:11,brand:'دُرسا',name:'کیف شانه‌ای لیان',category:'کیف',price:7600000,image:img('1594223274512-ad4803739b7d'),alt:'کیف شانه‌ای',colors:['مشکی']},
 {id:12,brand:'سایه',name:'روسری ابریشم آینه',category:'اکسسوری',price:2800000,image:img('1529139575747-1d6f8a2f5e2f'),alt:'روسری ابریشمی',colors:['زیتونی','کرم']}
 ]
+
+const productGallery=(p:Product)=>[p.image,...(p.gallery??[])]
+export const products:Product[]=baseProducts.map(p=>({...p,
+ sizes:p.sizes??(p.category==='کفش'?['۳۸','۳۹','۴۰','۴۱','۴۲']:p.category==='پوشاک'?['۳۶','۳۸','۴۰','۴۲','۴۴']:undefined),
+ gallery:productGallery(p),
+ description:p.description??'قطعه‌ای منتخب از آرشیو آرکا؛ طراحی‌شده با تمرکز بر فرم، کیفیت و استفاده‌ی طولانی‌مدت.',
+ material:p.material??(p.category==='کیف'||p.category==='کفش'?'چرم طبیعی':'ترکیب متریال باکیفیت'),
+ details:p.details??['طراحی معاصر و مینیمال','ساخت دقیق با توجه به جزئیات','مناسب برای استفاده‌ی روزمره و استایل‌های رسمی'],
+ sku:p.sku??`ARKA-${String(p.id).padStart(4,'0')}`,
+ stock:p.stock??7
+}))
+
 
 export const brands:Brand[]=[
 {name:'نُما',story:'سادگی دقیق، برش‌های آرام و نگاه معاصر.',image:img('1529139575747-1d6f8a2f5e2f',1000,1200)},
