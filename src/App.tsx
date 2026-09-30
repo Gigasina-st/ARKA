@@ -57,7 +57,7 @@ export default function App(){
   </main>}
   {page==='brands'&&<BrandsPage onAdd={add} onOpenBrand={openBrand}/>} 
   {page==='brand'&&selected&&<BrandDetail brand={selected} onAdd={add} onBack={goHome}/>} 
-  {page==='product'&&selectedProduct&&<ProductDetail product={selectedProduct} onAdd={add} onOpenProduct={openProduct} onBack={openBrands}/>}  
+  {page==='product'&&selectedProduct&&<ProductDetail product={selectedProduct} onAdd={add} onOpenProduct={openProduct} onBack={goHome}/>}  
   <Footer/>
   {cartOpen&&<CartDrawer items={cart} onClose={()=>setCartOpen(false)} onRemove={remove} onChange={change}/>}
  </div>
