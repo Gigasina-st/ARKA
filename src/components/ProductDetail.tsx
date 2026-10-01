@@ -1,4 +1,4 @@
-import {useMemo,useState} from 'react'
+import {useEffect,useMemo,useState} from 'react'
 import {ArrowLeft,ChevronLeft,ChevronRight,Heart,Minus,Plus,Share2} from 'lucide-react'
 import ProductCard from './ProductCard'
 import SectionTitle from './SectionTitle'
