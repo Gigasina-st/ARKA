@@ -4,6 +4,7 @@ import ProductCard from './ProductCard'
 import SectionTitle from './SectionTitle'
 import type {Product} from '../types'
 import {products} from '../data'
+import {isWishlisted,toggleWishlist} from '../utils/wishlist'
 
 const toman=(n:number)=>new Intl.NumberFormat('fa-IR').format(n)+' تومان'
 
@@ -15,6 +16,7 @@ export default function ProductDetail({product,onAdd,onOpenProduct,onBack}:Props
  const [color,setColor]=useState(product.colors[0]??'')
  const [size,setSize]=useState(product.sizes?.[0]??'')
  const [liked,setLiked]=useState(false)
+ useEffect(()=>{const sync=()=>setLiked(isWishlisted(product.id));sync();addEventListener('arka-wishlist-change',sync);return()=>removeEventListener('arka-wishlist-change',sync)},[product.id])
  const [sizeGuideOpen,setSizeGuideOpen]=useState(false)
  const [qty,setQty]=useState(1)
  const [copied,setCopied]=useState(false)
@@ -38,7 +40,7 @@ export default function ProductDetail({product,onAdd,onOpenProduct,onBack}:Props
    </div>
 
    <div className="product-info">
-    <div className="product-info-top"><span className="eyebrow">{product.brand}</span><button className={`detail-wishlist ${liked?'liked':''}`} onClick={()=>setLiked(!liked)} aria-label="علاقه‌مندی"><Heart/></button></div>
+    <div className="product-info-top"><span className="eyebrow">{product.brand}</span><button className={`detail-wishlist ${liked?'liked':''}`} onClick={()=>setLiked(toggleWishlist(product.id))} aria-label="علاقه‌مندی"><Heart/></button></div>
     <h1>{product.name}</h1>
     <div className="detail-price">{toman(product.price)} {product.oldPrice&&<del>{toman(product.oldPrice)}</del>}</div>
     {product.stock&&product.stock<5?<p className="stock-note">تنها {new Intl.NumberFormat('fa-IR').format(product.stock)} عدد باقی مانده</p>:<p className="stock-note available">موجود</p>}
