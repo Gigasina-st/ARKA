@@ -7,7 +7,7 @@ import {products} from '../data'
 
 const toman=(n:number)=>new Intl.NumberFormat('fa-IR').format(n)+' تومان'
 
-type Props={product:Product;onAdd:(p:Product)=>void;onOpenProduct:(p:Product)=>void;onBack:()=>void}
+type Props={product:Product;onAdd:(p:Product,options?:{color?:string;size?:string;qty?:number})=>void;onOpenProduct:(p:Product)=>void;onBack:()=>void}
 
 export default function ProductDetail({product,onAdd,onOpenProduct,onBack}:Props){
  const gallery=useMemo(()=>product.gallery?.length?product.gallery:[product.image],[product])
@@ -20,7 +20,7 @@ export default function ProductDetail({product,onAdd,onOpenProduct,onBack}:Props
  const [copied,setCopied]=useState(false)
  const related=products.filter(p=>p.id!==product.id&&(p.brand===product.brand||p.category===product.category)).slice(0,4)
 
- const addToCart=()=>{for(let i=0;i<qty;i++)onAdd(product)}
+ const addToCart=()=>onAdd(product,{color,size,qty})
  const share=async()=>{
   const url=window.location.href
   try{if(navigator.share)await navigator.share({title:`آرکا | ${product.name}`,text:`مشاهده ${product.name} از برند ${product.brand}`,url});else{await navigator.clipboard.writeText(url);setCopied(true);setTimeout(()=>setCopied(false),1800)}}catch{}
