@@ -19,10 +19,10 @@ export default function App(){
  const openBrand=(name:string)=>{setSelectedBrand(name);setPage('brand');window.scrollTo(0,0)}
  const selected=brands.find(b=>b.name===selectedBrand)
  const openProduct=(product:Product)=>{setSelectedProduct(product);setPage('product');window.history.pushState({},'',`#/product/${product.id}`);window.scrollTo(0,0)}
- useEffect(()=>{const onPop=()=>{const m=window.location.hash.match(/^#\\/product\\/(\\d+)$/);if(m){const p=products.find(x=>x.id===Number(m[1]));if(p){setSelectedProduct(p);setPage('product');return}}setSelectedProduct(null);setPage('home')};onPop();addEventListener('popstate',onPop);addEventListener('hashchange',onPop);return()=>{removeEventListener('popstate',onPop);removeEventListener('hashchange',onPop)}},[])
+ useEffect(()=>{const onPop=()=>{const m=window.location.hash.match(/^#\/product\/(\d+)$/);if(m){const p=products.find(x=>x.id===Number(m[1]));if(p){setSelectedProduct(p);setPage('product');return}}setSelectedProduct(null);setPage('home')};onPop();addEventListener('popstate',onPop);addEventListener('hashchange',onPop);return()=>{removeEventListener('popstate',onPop);removeEventListener('hashchange',onPop)}},[])
  const [cartOpen,setCartOpen]=useState(false)
- const [cart,setCart]=useState<{product:Product;qty:number}[]>([])
- const add=(product:Product)=>setCart(c=>{const x=c.find(i=>i.product.id===product.id);return x?c.map(i=>i.product.id===product.id?{...i,qty:i.qty+1}:i):[...c,{product,qty:1}]})
+ const [cart,setCart]=useState<{product:Product;qty:number;color?:string;size?:string}[]>([])
+ const add=(product:Product,options:{color?:string;size?:string;qty?:number}={})=>setCart(c=>{const qty=options.qty??1;const x=c.find(i=>i.product.id===product.id&&i.color===options.color&&i.size===options.size);return x?c.map(i=>i===x?{...i,qty:i.qty+qty}:i):[...c,{product,qty,color:options.color,size:options.size}]})
  const remove=(id:number)=>setCart(c=>c.filter(i=>i.product.id!==id))
  const change=(id:number,d:number)=>setCart(c=>c.map(i=>i.product.id===id?{...i,qty:Math.max(1,i.qty+d)}:i))
  const count=cart.reduce((s,i)=>s+i.qty,0)
@@ -57,7 +57,7 @@ export default function App(){
   </main>}
   {page==='brands'&&<BrandsPage onAdd={add} onOpenBrand={openBrand} onOpenProduct={openProduct}/>} 
   {page==='brand'&&selected&&<BrandDetail brand={selected} onAdd={add} onOpenProduct={openProduct} onBack={openBrands}/>} 
-  {page==='product'&&selectedProduct&&<ProductDetail product={selectedProduct} onAdd={add} onOpenProduct={openProduct} onBack={goHome}/>}  
+  {page==='product'&&selectedProduct&&<ProductDetail product={selectedProduct} onAdd={(p,options)=>add(p,options)} onOpenProduct={openProduct} onBack={goHome}/>}  
   <Footer/>
   {cartOpen&&<CartDrawer items={cart} onClose={()=>setCartOpen(false)} onRemove={remove} onChange={change}/>}
  </div>
