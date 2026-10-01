@@ -19,7 +19,7 @@ export default function App(){
  const openBrand=(name:string)=>{setSelectedBrand(name);setPage('brand');window.scrollTo(0,0)}
  const selected=brands.find(b=>b.name===selectedBrand)
  const openProduct=(product:Product)=>{setSelectedProduct(product);setPage('product');window.history.pushState({},'',`#/product/${product.id}`);window.scrollTo(0,0)}
- useEffect(()=>{const onPop=()=>{const m=window.location.hash.match(/^#\/product\/(\d+)$/);if(m){const p=products.find(x=>x.id===Number(m[1]));if(p){setSelectedProduct(p);setPage('product');return}}setSelectedProduct(null);setPage('home')};onPop();addEventListener('popstate',onPop);addEventListener('hashchange',onPop);return()=>{removeEventListener('popstate',onPop);removeEventListener('hashchange',onPop)}},[])
+ useEffect(()=>{const onPop=()=>{const hash=window.location.hash;const prefix='#/product/';if(hash.startsWith(prefix)){const id=Number(hash.slice(prefix.length));const p=products.find(x=>x.id===id);if(p){setSelectedProduct(p);setPage('product');return}}setSelectedProduct(null);setPage('home')};onPop();addEventListener('popstate',onPop);addEventListener('hashchange',onPop);return()=>{removeEventListener('popstate',onPop);removeEventListener('hashchange',onPop)}},[])
  const [cartOpen,setCartOpen]=useState(false)
  const [cart,setCart]=useState<{product:Product;qty:number;color?:string;size?:string}[]>([])
  const add=(product:Product,options:{color?:string;size?:string;qty?:number}={})=>setCart(c=>{const qty=options.qty??1;const x=c.find(i=>i.product.id===product.id&&i.color===options.color&&i.size===options.size);return x?c.map(i=>i===x?{...i,qty:i.qty+qty}:i):[...c,{product,qty,color:options.color,size:options.size}]})
