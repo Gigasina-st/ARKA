@@ -6,12 +6,13 @@ import SectionTitle from './components/SectionTitle'
 import CartDrawer from './components/CartDrawer'
 import Footer from './components/Footer'
 import ProductDetail from './components/ProductDetail'
+import CheckoutPage from './components/CheckoutPage'
 import BrandsPage,{BrandDetail} from './components/BrandsPage'
 import {products,brands,articles} from './data'
 import type {Product} from './types'
 
 export default function App(){
- const [page,setPage]=useState<'home'|'brands'|'brand'|'product'>('home')
+ const [page,setPage]=useState<'home'|'brands'|'brand'|'product'|'checkout'>('home')
  const [selectedProduct,setSelectedProduct]=useState<Product|null>(null)
  const [selectedBrand,setSelectedBrand]=useState('')
  const goHome=()=>{setPage('home');setSelectedProduct(null);window.history.pushState({},'',window.location.pathname+window.location.search);window.scrollTo(0,0)}
@@ -21,6 +22,8 @@ export default function App(){
  const openProduct=(product:Product)=>{setSelectedProduct(product);setPage('product');window.history.pushState({},'',`#/product/${product.id}`);window.scrollTo(0,0)}
  useEffect(()=>{const onPop=()=>{const hash=window.location.hash;const prefix='#/product/';if(hash.startsWith(prefix)){const id=Number(hash.slice(prefix.length));const p=products.find(x=>x.id===id);if(p){setSelectedProduct(p);setPage('product');return}}setSelectedProduct(null);setPage('home')};onPop();addEventListener('popstate',onPop);addEventListener('hashchange',onPop);return()=>{removeEventListener('popstate',onPop);removeEventListener('hashchange',onPop)}},[])
  const [cartOpen,setCartOpen]=useState(false)
+ const openCheckout=()=>{setCartOpen(false);setPage('checkout');window.scrollTo(0,0)}
+ const backToCart=()=>{setPage('home');setCartOpen(true)}
  const [cart,setCart]=useState<{product:Product;qty:number;color?:string;size?:string}[]>([])
  const add=(product:Product,options:{color?:string;size?:string;qty?:number}={})=>setCart(c=>{const qty=options.qty??1;const x=c.find(i=>i.product.id===product.id&&i.color===options.color&&i.size===options.size);return x?c.map(i=>i===x?{...i,qty:i.qty+qty}:i):[...c,{product,qty,color:options.color,size:options.size}]})
  const remove=(id:number)=>setCart(c=>c.filter(i=>i.product.id!==id))
@@ -58,7 +61,8 @@ export default function App(){
   {page==='brands'&&<BrandsPage onAdd={add} onOpenBrand={openBrand} onOpenProduct={openProduct}/>} 
   {page==='brand'&&selected&&<BrandDetail brand={selected} onAdd={add} onOpenProduct={openProduct} onBack={openBrands}/>} 
   {page==='product'&&selectedProduct&&<ProductDetail product={selectedProduct} onAdd={(p,options)=>add(p,options)} onOpenProduct={openProduct} onBack={goHome}/>}  
+  {page==='checkout'&&<CheckoutPage items={cart} onBack={backToCart} onComplete={()=>{}}/>}
   <Footer/>
-  {cartOpen&&<CartDrawer items={cart} onClose={()=>setCartOpen(false)} onRemove={remove} onChange={change}/>}
+  {cartOpen&&<CartDrawer items={cart} onClose={()=>setCartOpen(false)} onRemove={remove} onChange={change} onCheckout={openCheckout}/>}
  </div>
 }
